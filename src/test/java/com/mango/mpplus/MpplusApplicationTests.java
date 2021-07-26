@@ -40,4 +40,36 @@ class MpplusApplicationTests {
         System.out.println("insert:" + insert);
     }
 
+    //修改用户
+    @Test
+    public void updateUser() {
+        User user = new User();
+        user.setId(2L);
+        user.setName("2222");
+        userMapper.updateById(user);
+    }
+
+    //测试乐观锁修改成功
+    @Test
+    public void testOptimisticLocker() {
+        User user = userMapper.selectById(9L);
+        user.setName("helen");
+        user.setEmail("helen@qq.com");
+        userMapper.updateById(user);
+    }
+
+    //测试乐观锁修改失败
+    @Test
+    public void testOptimisticLockerFail() {
+        //查询
+        User user = userMapper.selectById(1L);
+        //修改数据
+        user.setName("Helen Yao1");
+        user.setEmail("helen@qq.com1");
+        //模拟取出数据后，数据库中version实际数据比取出的值大，即已被其它线程修改并更新了version
+        user.setVersion(user.getVersion() - 1);
+        //执行更新
+        userMapper.updateById(user);
+    }
+
 }
