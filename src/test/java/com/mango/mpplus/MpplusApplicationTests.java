@@ -1,5 +1,7 @@
 package com.mango.mpplus;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mango.mpplus.entity.User;
 import com.mango.mpplus.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -98,6 +101,34 @@ class MpplusApplicationTests {
         map.put("name", "helen");
         List<User> users = userMapper.selectByMap(map);
         users.forEach(System.out::println);
+    }
+
+    //测试分页
+    @Test
+    public void testSelectPage() {
+        //两个参数相当于currentPage、pageSize
+        Page<User> page = new Page<>(1,5);
+        userMapper.selectPage(page, null);
+        page.getRecords().forEach(System.out::println);
+        System.out.println(page.getCurrent());
+        System.out.println(page.getPages());
+        System.out.println(page.getSize());
+        System.out.println(page.getTotal());
+        System.out.println(page.hasNext());
+        System.out.println(page.hasPrevious());
+    }
+
+    @Test
+    public void testSelectMapsPage() {
+        Page<User> page = new Page<>(1, 5);
+        IPage<Map<String, Object>> mapIPage = userMapper.selectMapsPage(page, null);
+        mapIPage.getRecords().forEach(System.out::println);
+        System.out.println(page.getCurrent());
+        System.out.println(page.getPages());
+        System.out.println(page.getSize());
+        System.out.println(page.getTotal());
+        System.out.println(page.hasNext());
+        System.out.println(page.hasPrevious());
     }
 
 }
