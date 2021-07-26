@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -70,6 +72,32 @@ class MpplusApplicationTests {
         user.setVersion(user.getVersion() - 1);
         //执行更新
         userMapper.updateById(user);
+    }
+
+    //根据ID查询
+    @Test
+    public void testSelectById() {
+        User user = userMapper.selectById(1L);
+        System.out.println(user);
+    }
+
+    //根据多个id批量查询
+    @Test
+    public void testSelectByIds() {
+        List<User> users = userMapper.selectBatchIds(Arrays.asList(1, 2, 3));
+        users.forEach(System.out::println);
+    }
+
+    //通过map封装查询条件
+    @Test
+    public void testSelectByMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        //注意：map中的key对应的是数据库中的列名。例如数据库user_id，实体类是userId，这时map的key需
+        //要填写user_id
+        map.put("id", 1);
+        map.put("name", "helen");
+        List<User> users = userMapper.selectByMap(map);
+        users.forEach(System.out::println);
     }
 
 }
