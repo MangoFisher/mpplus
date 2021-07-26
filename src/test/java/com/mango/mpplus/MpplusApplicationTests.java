@@ -28,4 +28,16 @@ class MpplusApplicationTests {
         users.forEach(System.out::println);
     }
 
+    //添加用户
+    @Test
+    public void addUser() {
+        User user = new User();
+        user.setName("name1");
+        user.setAge(100);
+        user.setEmail("test1@qq.com");
+
+        int insert = userMapper.insert(user);
+        System.out.println("insert:" + insert);
+    }
+
 }
