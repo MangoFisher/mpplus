@@ -117,7 +117,7 @@ class MpplusApplicationTests {
         System.out.println(page.hasNext());
         System.out.println(page.hasPrevious());
     }
-
+    //测试条件选择
     @Test
     public void testSelectMapsPage() {
         Page<User> page = new Page<>(1, 5);
@@ -129,6 +129,30 @@ class MpplusApplicationTests {
         System.out.println(page.getTotal());
         System.out.println(page.hasNext());
         System.out.println(page.hasPrevious());
+    }
+
+    //根据id删除
+    @Test
+    public void testDeleteById() {
+        int result = userMapper.deleteById(9L);
+        System.out.println(result);
+    }
+
+    //批量删除
+    @Test
+    public void testDeleteBatchIds() {
+        int result = userMapper.deleteBatchIds(Arrays.asList(6L, 7L, 8L));
+        System.out.println(result);
+    }
+
+    //简单的条件查询删除
+    @Test
+    public void testDeleteByMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("name", "helen");
+        map.put("age", 18);
+        int result = userMapper.deleteByMap(map);
+        System.out.println(result);
     }
 
 }
