@@ -1,5 +1,7 @@
 package com.mango.mpplus;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mango.mpplus.entity.User;
@@ -155,4 +157,144 @@ class MpplusApplicationTests {
         System.out.println(result);
     }
 
+    /**
+     * 测试 逻辑删除
+     */
+    @Test
+    public void testLogicDelete() {
+        int result = userMapper.deleteById(10L);
+        System.out.println(result);
+    }
+
+    /**
+     * 实现一些复杂条件查询
+     */
+    @Test
+    public void testDelete() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.isNotNull("name")
+                    .ge("age", 20)
+                    .isNotNull("email");
+        int result = userMapper.delete(queryWrapper);
+        System.out.println(result);
+    }
+
+    //seletOne返回的是一条实体记录，当出现多条时会报错
+    @Test
+    public void testSelectOne() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("name", "Tom");
+        User user = userMapper.selectOne(queryWrapper);
+        System.out.println(user);
+    }
+
+    @Test
+    public void testSelectCount() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between("age", 20, 30);
+        Integer count = userMapper.selectCount(queryWrapper);
+        System.out.println(count);
+    }
+
+    @Test
+    public void testSelectList02() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", 4);
+        map.put("name", "Sandy");
+        map.put("age", 21);
+        queryWrapper.allEq(map);
+        List<User> users = userMapper.selectList(queryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void testSelectMaps() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.notLike("name", "2")
+                    .likeRight("email", "test3");
+        List<Map<String, Object>> maps = userMapper.selectMaps(queryWrapper);
+        maps.forEach(System.out::println);
+    }
+
+    //子查询
+    @Test
+    public void testSelectObjs() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        //queryWrapper.in("id", 1, 2, 3);
+        queryWrapper.between("age", 21, 25)
+                    .inSql("id", "select id from user where id > 4");
+        List<Object> objects = userMapper.selectObjs(queryWrapper);//返回值是Object列表
+        objects.forEach(System.out::println);
+    }
+
+    @Test
+    public void testUpdate1() {
+        //修改值
+        User user = new User();
+        user.setAge(99);
+        user.setName("Andy");
+        //修改条件
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper
+                .like("name", "h")
+                .or()
+                .between("age", 20, 30);
+        int result = userMapper.update(user, userUpdateWrapper);
+        System.out.println(result);
+    }
+
+    @Test
+    public void testUpdate2() {
+        //修改值
+        User user = new User();
+        user.setAge(100);
+        user.setName("testname001");
+        //修改条件
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper
+                .like("name", "h")
+                .or(i -> i.eq("name", "李白").ne("age", 20));
+        int result = userMapper.update(user, userUpdateWrapper);
+        System.out.println(result);
+    }
+
+    @Test
+    public void testSelectListOrderBy() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<User> users = userMapper.selectList(queryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void testSelectListLast() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.last("limit 1");
+        List<User> users = userMapper.selectList(queryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    //指定要查询的列
+    @Test
+    public void testSelectListColumn() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("name", "age");
+        List<User> users = userMapper.selectList(queryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    public void testUpdateSet() {
+        //修改值
+        User user = new User();
+        user.setAge(99);
+        //修改条件
+        UpdateWrapper<User> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper
+                .like("name", "h")
+                .set("name", "老李头")//除了可以查询还可以使用set设置修改的字段
+                .setSql(" email = '123@qq.com'");//可以有子查询
+        int result = userMapper.update(user, userUpdateWrapper);
+    }
 }

@@ -16,6 +16,9 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.setFieldValByName("updateTime", new Date(), metaObject);
 
         this.setFieldValByName("version", 1, metaObject);
+
+        //逻辑删除
+        this.setFieldValByName("deleted", 0, metaObject);
     }
 
     @Override
